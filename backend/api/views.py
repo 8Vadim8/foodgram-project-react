@@ -7,6 +7,7 @@ from rest_framework.permissions import SAFE_METHODS
 
 from recipes.models import (
     FavoriteRecipe,
+    Follow,
     Ingredient,
     Tag,
     Recipe,
@@ -15,6 +16,7 @@ from recipes.models import (
 from users.models import User
 from .serializers import (
     FavoriteRecipeSerializer,
+    FollowSerializer,
     IngredientSerializer,
     RecipesCreateSerializer,
     RecipesListSerializer,
@@ -26,6 +28,47 @@ from .serializers import (
 class UsersViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    @action(methods=['GET'], detail=False,)
+    def get_subscriptions(self, request):
+        user = self.request.user
+        queryset = Follow.objects.filter(user=user)
+        page = self.paginate_queryset(queryset)
+        serializer = FollowSerializer(
+            page, many=True, context={'request': request}
+        )
+        return self.get_paginated_response(serializer.data)
+
+    @action(methods=['POST', 'DELETE'], detail=True,)
+    def do_subscribe(self, request, id):
+        author = get_object_or_404(User, id=id)
+        if request.method == 'POST':
+            if request.user.id == author.id:
+                return Response(
+                    {'errors': 'Вы не можете подписаться на себя'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            else:
+                serializer = FollowSerializer(
+                    Follow.objects.create(user=request.user, author=author),
+                    context={'request': request},
+                )
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
+        elif request.method == 'DELETE':
+            if Follow.objects.filter(
+                    user=request.user, author=author
+            ).exists():
+                Follow.objects.filter(
+                    user=request.user, author=author
+                ).delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response(
+                    {'errors': 'Нет такой подписки'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
 
 class TagViewSet(viewsets.ModelViewSet):
