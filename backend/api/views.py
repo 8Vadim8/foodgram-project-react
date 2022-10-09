@@ -66,7 +66,7 @@ class UsersViewSet(UserViewSet):
                 return Response(status=status.HTTP_204_NO_CONTENT)
             else:
                 return Response(
-                    {'errors': 'Нет такой подписки'},
+                    {'errors': 'Нет такой подписки!'},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
