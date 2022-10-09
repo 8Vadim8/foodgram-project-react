@@ -10,3 +10,4 @@ djoser==2.1.0
 drf-base64==2.0
 flake8==4.0.1
 isort==5.10.1
+pillow==9.2.0
