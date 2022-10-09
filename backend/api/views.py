@@ -137,7 +137,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
                 user=self.request.user, recipe=recipe
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             if FavoriteRecipe.objects.filter(
                     user=self.request.user, recipe=recipe
             ).exists():
@@ -159,7 +159,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
             serializer = FavoriteRecipeSerializer(recipe)
             ShoppingCart.objects.create(user=self.request.user, recipe=recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             if ShoppingCart.objects.filter(
                     user=self.request.user, recipe=recipe
             ).exists():
@@ -174,21 +174,21 @@ class RecipesViewSet(viewsets.ModelViewSet):
                 )
 
     @action(
-        methods=["GET"], detail=False, permission_classes=(IsAuthenticated,)
+        methods=['GET'], detail=False, permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
         ingredients = RecipeIngredient.objects.select_related(
-            "recipe", "ingredient"
+            'recipe', 'ingredient'
         )
         ingredients = ingredients.filter(
             recipe__shopping_cart_recipe__user=request.user
         )
         ingredients = ingredients.values(
-            "ingredient__name", "ingredient__measurement_unit"
+            'ingredient__name', 'ingredient__measurement_unit'
         )
-        ingredients = ingredients.annotate(ingredient_total=Sum("amount"))
-        ingredients = ingredients.order_by("ingredient__name")
-        shopping_list = "Список покупок: \n"
+        ingredients = ingredients.annotate(ingredient_total=Sum('amount'))
+        ingredients = ingredients.order_by('ingredient__name')
+        shopping_list = 'Список покупок: \n'
         for ingredient in ingredients:
             shopping_list += (
                 f'{ingredient["ingredient__name"]} - '
@@ -196,9 +196,9 @@ class RecipesViewSet(viewsets.ModelViewSet):
                 f'({ingredient["ingredient__measurement_unit"]}) \n'
             )
             response = HttpResponse(
-                shopping_list, content_type="text/plain; charset=utf8"
+                shopping_list, content_type='text/plain; charset=utf8'
             )
             response[
-                "Content-Disposition"
+                'Content-Disposition'
             ] = 'attachment; filename="shopping_list.txt"'
         return response

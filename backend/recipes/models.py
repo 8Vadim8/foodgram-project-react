@@ -134,6 +134,12 @@ class RecipeIngredient(models.Model):
             )
         ]
 
+    def __str__(self):
+        return (
+            f'{self.ingredient.name} ({self.ingredient.measurement_unit})'
+            f' - {self.amount} '
+        )
+
 
 class FavoriteRecipe(models.Model):
     user = models.ForeignKey(
@@ -153,6 +159,10 @@ class FavoriteRecipe(models.Model):
     class Meta:
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
+
+    def __str__(self):
+        favor_list = [item['name'] for item in self.recipe.values('name')]
+        return f'Пользователю {self.user} нравятся эти рецепты: {favor_list}'
 
 
 class ShoppingCart(models.Model):
@@ -174,6 +184,10 @@ class ShoppingCart(models.Model):
         verbose_name = 'Покупка'
         verbose_name_plural = 'Покупки'
         ordering = ['-pk']
+
+    def __str__(self):
+        shopping_list = [item['name'] for item in self.recipe.values('name')]
+        return f'Пользователь {self.user} добавил в покупки: {shopping_list}'
 
 
 class Follow(models.Model):
@@ -197,7 +211,7 @@ class Follow(models.Model):
     class Meta:
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
-        ordering = ['-id']
+        ordering = ['author_id']
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'author'],
