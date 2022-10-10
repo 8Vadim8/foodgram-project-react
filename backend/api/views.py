@@ -7,28 +7,15 @@ from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 
+from recipes.models import (FavoriteRecipe, Follow, Ingredient, Recipe,
+                            RecipeIngredient, ShoppingCart, Tag)
+from users.models import User
+
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsOwnerOrReadOnly
-from .serializers import (
-    FavoriteRecipeSerializer,
-    FollowSerializer,
-    IngredientSerializer,
-    RecipesCreateSerializer,
-    RecipesListSerializer,
-    TagSerializer,
-    UserSerializer
-)
-
-from recipes.models import (
-    FavoriteRecipe,
-    Follow,
-    Ingredient,
-    Tag,
-    Recipe,
-    RecipeIngredient,
-    ShoppingCart,
-)
-from users.models import User
+from .serializers import (FavoriteRecipeSerializer, FollowSerializer,
+                          IngredientSerializer, RecipesCreateSerializer,
+                          RecipesListSerializer, TagSerializer, UserSerializer)
 
 
 class UsersViewSet(UserViewSet):
