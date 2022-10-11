@@ -43,3 +43,7 @@ class RecipeAdmin(admin.ModelAdmin):
         'tags',
     )
     empty_value_display = '-пусто-'
+
+    @admin.display(description='В избранном')
+    def get_favorite_count(self, obj):
+        return obj.favorite_recipe.count()
