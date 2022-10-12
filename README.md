@@ -9,9 +9,6 @@
 
 Проект можно посмотреть [тут](http://158.160.9.182)
 
-admin: admin@foodgram.ru
-
-password: admin_password
 
 ## Реализовано в CI/CD
 - автоматический запуск тестов
